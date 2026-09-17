@@ -1,1 +1,730 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>الحكاية</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #17213a 0%, #090d18 55%, #05070d 100%);
+      color: #f5f1e8;
+      font-family: Georgia, "Times New Roman", serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .card {
+      background: rgba(13, 19, 34, 0.94);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 22px;
+      padding: 30px 22px;
+      box-shadow: 0 0 35px rgba(0,0,0,0.45);
+    }
+
+    .gold {
+      color: #d8b45a;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: normal;
+      margin: 0 0 12px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,.3);
+      background: #080c16;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      text-align: right;
+    }
+
+    input:focus {
+      border-color: #d8b45a;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d8b45a;
+      border-radius: 12px;
+      background: transparent;
+      color: #d8b45a;
+      font-size: 16px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button:hover {
+      background: rgba(216,180,90,.1);
+    }
+
+    .error {
+      color: #d98989;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+
+    #chatPage {
+      display: none;
+    }
+
+    .chat-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .chat-header h2 {
+      font-weight: normal;
+      margin: 0 0 5px;
+      color: #d8b45a;
+    }
+
+    .status {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .messages {
+      height: 420px;
+      overflow-y: auto;
+      padding: 10px 4px;
+      margin-bottom: 15px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 11px 14px;
+      margin: 8px 0;
+      border-radius: 15px;
+      line-height: 1.6;
+      word-wrap: break-word;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .mine {
+      margin-right: auto;
+      margin-left: 0;
+      background: #b99a4b;
+      color: #101010;
+      border-bottom-right-radius: 4px;
+    }
+
+    .other {
+      margin-left: auto;
+      margin-right: 0;
+      background: #1c263d;
+      color: #eee;
+      border: 1px solid rgba(255,255,255,.08);
+      border-bottom-left-radius: 4px;
+    }
+
+    .time {
+      display: block;
+      font-size: 9px;
+      opacity: .55;
+      margin-top: 3px;
+    }
+
+    .send-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    .send-area input {
+      margin: 0;
+      flex: 1;
+    }
+
+    .send-area button {
+      width: 75px;
+      flex-shrink: 0;
+    }
+
+    .logout {
+      margin-top: 15px;
+      border-color: rgba(255,255,255,.12);
+      color: #777;
+      font-size: 12px;
+      padding: 9px;
+    }
+
+    .small-note {
+      text-align: center;
+      color: #666;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- صفحة الدخول -->
+  <div class="card" id="loginPage">
+
+    <h1>
+      هناك شيءٌ آخر...
+    </h1>
+
+    <div class="subtitle">
+      بعض الأبواب لا تُفتح إلا بكلمة صغيرة.<br>
+      اكتبي الاسم والرمز الذي وصل إليكِ.
+    </div>
+
+    <input
+      type="text"
+      id="username"
+      placeholder="الاسم"
+      autocomplete="off"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="الرمز"
+      autocomplete="off"
+    >
+
+    <button onclick="login()">
+      <span class="gold">دخول</span>
+    </button>
+
+    <div class="error" id="loginError">
+      يبدو أن هناك شيئًا غير صحيح...
+    </div>
+
+  </div>
+
+
+  <!-- صفحة الدردشة -->
+  <div class="card" id="chatPage">
+
+    <div class="chat-header">
+
+      <h2>الصفحة الأخيرة</h2>
+
+      <div class="status" id="status">
+        جارٍ الاتصال...
+      </div>
+
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="send-area">
+
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="اكتبي شيئًا..."
+        autocomplete="off"
+      >
+
+      <button onclick="sendMessage()">
+        إرسال
+      </button>
+
+    </div>
+
+    <button class="logout" onclick="logout()">
+      الخروج
+    </button>
+
+    <div class="small-note">
+      هذه المحادثة خاصة بين الطرفين.
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  /* =====================================================
+     إعدادات Supabase
+     ===================================================== */
+
+  const SUPABASE_URL =
+    "https://noeakvrotdsanqzrkuti.supabase.co";
+
+  /*
+    ضع هنا الـ Publishable Key الموجود عندك في:
+    Project Settings → API Keys
+
+    لا تضع Database Password
+    ولا service_role key
+  */
+
+  const SUPABASE_KEY =
+    "sb_publishable_vY2JWVsg-4lvQTQO_OXrEw_WCOWMB_c";
+
+
+  const supabaseClient =
+    supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  /* =====================================================
+     إعدادات الدخول
+     ===================================================== */
+
+  /*
+    غيّر هذه القيم لاحقًا للبيانات التي تريدها.
+
+    هذه ليست بيانات Supabase.
+    هي فقط بوابة الدخول الموجودة في الصفحة.
+  */
+
+  const CORRECT_USERNAME = "someone";
+
+  const CORRECT_PASSWORD = "mystery";
+
+
+  /*
+    اسم الغرفة.
+    يجب أن يكون نفسه عند الطرفين.
+  */
+
+  const ROOM_ID = "mystery-room-7f92k4";
+
+
+  let currentUser = null;
+
+
+  /* =====================================================
+     تسجيل الدخول
+     ===================================================== */
+
+  async function login() {
+
+    const username =
+      document.getElementById("username").value.trim();
+
+    const password =
+      document.getElementById("password").value.trim();
+
+    const error =
+      document.getElementById("loginError");
+
+
+    if (
+      username !== CORRECT_USERNAME ||
+      password !== CORRECT_PASSWORD
+    ) {
+
+      error.style.display = "block";
+
+      return;
+    }
+
+
+    error.style.display = "none";
+
+
+    /*
+      تسجيل دخول مجهول إلى Supabase
+    */
+
+    const { data, error: authError } =
+      await supabaseClient.auth.signInAnonymously();
+
+
+    if (authError) {
+
+      console.error(authError);
+
+      error.innerText =
+        "تعذر الاتصال بالمحادثة.";
+
+      error.style.display = "block";
+
+      return;
+    }
+
+
+    currentUser = data.user;
+
+
+    document.getElementById("loginPage").style.display =
+      "none";
+
+    document.getElementById("chatPage").style.display =
+      "block";
+
+
+    document.getElementById("status").innerText =
+      "متصل";
+
+
+    await loadMessages();
+
+    listenForMessages();
+
+  }
+
+
+  /* =====================================================
+     تحميل الرسائل القديمة
+     ===================================================== */
+
+  async function loadMessages() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("messages")
+        .select("*")
+        .eq("room_id", ROOM_ID)
+        .order("created_at", {
+          ascending: true
+        });
+
+
+    if (error) {
+
+      console.error(error);
+
+      document.getElementById("status").innerText =
+        "تعذر تحميل الرسائل";
+
+      return;
+    }
+
+
+    const messages =
+      document.getElementById("messages");
+
+    messages.innerHTML = "";
+
+
+    data.forEach(message => {
+
+      displayMessage(message);
+
+    });
+
+
+    scrollToBottom();
+
+  }
+
+
+  /* =====================================================
+     استقبال الرسائل الجديدة مباشرة
+     ===================================================== */
+
+  function listenForMessages() {
+
+    supabaseClient
+      .channel("mystery-chat-room")
+
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: "room_id=eq." + ROOM_ID
+        },
+
+        payload => {
+
+          displayMessage(payload.new);
+
+          scrollToBottom();
+
+        }
+
+      )
+
+      .subscribe(status => {
+
+        console.log("Realtime:", status);
+
+        if (status === "SUBSCRIBED") {
+
+          document.getElementById("status").innerText =
+            "متصل الآن";
+
+        }
+
+      });
+
+  }
+
+
+  /* =====================================================
+     عرض رسالة
+     ===================================================== */
+
+  function displayMessage(message) {
+
+    const container =
+      document.getElementById("messages");
+
+
+    /*
+      منع تكرار الرسالة في حال ظهرت
+      من التحميل ومن Realtime.
+    */
+
+    if (
+      document.querySelector(
+        `[data-message-id="${message.id}"]`
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.classList.add("message");
+
+
+    /*
+      نحدد هل الرسالة مني أو من الطرف الآخر
+    */
+
+    if (
+      currentUser &&
+      message.sender === currentUser.id
+    ) {
+
+      div.classList.add("mine");
+
+    } else {
+
+      div.classList.add("other");
+
+    }
+
+
+    div.setAttribute(
+      "data-message-id",
+      message.id
+    );
+
+
+    const text =
+      document.createElement("div");
+
+    text.innerText =
+      message.content;
+
+
+    const time =
+      document.createElement("span");
+
+    time.className = "time";
+
+
+    const date =
+      new Date(message.created_at);
+
+
+    time.innerText =
+      date.toLocaleTimeString(
+        "ar-SA",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+
+    div.appendChild(text);
+
+    div.appendChild(time);
+
+    container.appendChild(div);
+
+  }
+
+
+  /* =====================================================
+     إرسال رسالة
+     ===================================================== */
+
+  async function sendMessage() {
+
+    const input =
+      document.getElementById("messageInput");
+
+
+    const content =
+      input.value.trim();
+
+
+    if (!content) {
+
+      return;
+
+    }
+
+
+    if (!currentUser) {
+
+      return;
+
+    }
+
+
+    input.disabled = true;
+
+
+    const { error } =
+      await supabaseClient
+        .from("messages")
+        .insert({
+
+          room_id: ROOM_ID,
+
+          sender: currentUser.id,
+
+          content: content
+
+        });
+
+
+    input.disabled = false;
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "لم يتم إرسال الرسالة. تأكد من إعدادات Supabase."
+      );
+
+      return;
+
+    }
+
+
+    input.value = "";
+
+    input.focus();
+
+  }
+
+
+  /* =====================================================
+     زر Enter للإرسال
+     ===================================================== */
+
+  document
+    .getElementById("messageInput")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     النزول لآخر رسالة
+     ===================================================== */
+
+  function scrollToBottom() {
+
+    const messages =
+      document.getElementById("messages");
+
+
+    setTimeout(() => {
+
+      messages.scrollTop =
+        messages.scrollHeight;
+
+    }, 50);
+
+  }
+
+
+  /* =====================================================
+     الخروج
+     ===================================================== */
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    document.getElementById("chatPage").style.display =
+      "none";
+
+    document.getElementById("loginPage").style.display =
+      "block";
+
+    document.getElementById("messages").innerHTML =
+      "";
+
+    document.getElementById("username").value =
+      "";
+
+    document.getElementById("password").value =
+      "";
+
+  }
+
+</script>
+
+</body>
+</html>
