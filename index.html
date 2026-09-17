@@ -200,8 +200,6 @@
 
 <div class="page">
 
-  <!-- صفحة الدخول -->
-
   <div class="box" id="loginPage">
 
     <h1>
@@ -238,8 +236,6 @@
   </div>
 
 
-  <!-- صفحة المحادثة -->
-
   <div class="box" id="chatPage">
 
     <div class="chat-header">
@@ -265,7 +261,11 @@
         autocomplete="off"
       >
 
-      <button onclick="sendMessage()">
+      <button
+        id="sendButton"
+        type="button"
+        onclick="sendMessage()"
+      >
         إرسال
       </button>
 
@@ -288,10 +288,6 @@
 
 <script>
 
-  /* =========================
-     SUPABASE
-  ========================= */
-
   const SUPABASE_URL =
     "https://noeakvrotdsanqzrkutj.supabase.co";
 
@@ -305,19 +301,11 @@
     );
 
 
-  /* =========================
-     الحسابات
-  ========================= */
-
   const USERS = {
     someone: "1994",
     hero: "2026"
   };
 
-
-  /* =========================
-     الغرفة
-  ========================= */
 
   const ROOM_ID =
     "mystery-room-7f92k4";
@@ -328,9 +316,7 @@
   let realtimeChannel = null;
 
 
-  /* =========================
-     تسجيل الدخول
-  ========================= */
+  /* تسجيل الدخول */
 
   async function login() {
 
@@ -361,19 +347,16 @@
 
     try {
 
-      const {
-        data,
-        error
-      } =
+      const result =
         await supabaseClient.auth.signInAnonymously();
 
 
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw result.error;
       }
 
 
-      currentUser = data.user;
+      currentUser = result.data.user;
       currentUsername = username;
 
 
@@ -403,16 +386,11 @@
   }
 
 
-  /* =========================
-     تحميل الرسائل
-  ========================= */
+  /* تحميل الرسائل */
 
   async function loadMessages() {
 
-    const {
-      data,
-      error
-    } =
+    const result =
       await supabaseClient
         .from("messages")
         .select("*")
@@ -422,9 +400,9 @@
         });
 
 
-    if (error) {
+    if (result.error) {
 
-      console.error(error);
+      console.error(result.error);
 
       document.getElementById("status").textContent =
         "حدث خطأ في تحميل الرسائل";
@@ -440,7 +418,7 @@
     box.innerHTML = "";
 
 
-    data.forEach(message => {
+    result.data.forEach(function(message) {
 
       const div =
         document.createElement("div");
@@ -477,14 +455,18 @@
   }
 
 
-  /* =========================
-     إرسال الرسائل
-  ========================= */
+  /* إرسال الرسائل */
 
   async function sendMessage() {
 
     const input =
       document.getElementById("messageInput");
+
+    const button =
+      document.getElementById("sendButton");
+
+    const status =
+      document.getElementById("status");
 
     const content =
       input.value.trim();
@@ -503,51 +485,89 @@
     }
 
 
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("messages")
-        .insert({
+    button.disabled = true;
 
-          room_id: ROOM_ID,
-
-          /*
-           * sender في جدولك من نوع TEXT
-           * لذلك نحول UUID إلى نص
-           */
-
-          sender: String(currentUser.id),
-
-          content: content
-        });
+    button.textContent = "..." ;
 
 
-    if (error) {
+    try {
 
-      console.error(error);
+      const result =
+        await supabaseClient
+          .from("messages")
+          .insert([
+            {
+              room_id: ROOM_ID,
+              sender: String(currentUser.id),
+              content: content
+            }
+          ])
+          .select();
 
-      alert(
-        "حدث خطأ أثناء إرسال الرسالة:\n\n" +
-        error.message
+
+      if (result.error) {
+        throw result.error;
+      }
+
+
+      input.value = "";
+
+      input.focus();
+
+
+      status.textContent =
+        "متصل";
+
+
+      await loadMessages();
+
+
+    } catch (err) {
+
+      console.error(
+        "SEND MESSAGE ERROR:",
+        err
       );
 
-      return;
+
+      alert(
+        "تعذر إرسال الرسالة:\n\n" +
+        err.message
+      );
+
+
+      status.textContent =
+        "تعذر إرسال الرسالة";
+
+    } finally {
+
+      button.disabled = false;
+
+      button.textContent =
+        "إرسال";
     }
-
-
-    input.value = "";
-
-    input.focus();
-
-
-    await loadMessages();
   }
 
 
-  /* =========================
-     التحديث المباشر
-  ========================= */
+  /* Enter للإرسال */
+
+  document
+    .getElementById("messageInput")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+        }
+      }
+    );
+
+
+  /* التحديث المباشر */
 
   function startRealtime() {
 
@@ -585,29 +605,7 @@
   }
 
 
-  /* =========================
-     زر Enter للإرسال
-  ========================= */
-
-  document
-    .getElementById("messageInput")
-    .addEventListener(
-      "keydown",
-      function(event) {
-
-        if (event.key === "Enter") {
-
-          event.preventDefault();
-
-          sendMessage();
-        }
-      }
-    );
-
-
-  /* =========================
-     الخروج
-  ========================= */
+  /* الخروج */
 
   async function logout() {
 
