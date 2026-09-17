@@ -200,6 +200,45 @@
       font-size: 11px;
       margin-top: 15px;
     }
+
+    /* أيقونة بيانات الدخول */
+    .credentials-button {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid rgba(216,180,90,.55);
+      color: #d8b45a;
+      font-size: 18px;
+      font-family: Arial, sans-serif;
+    }
+
+    .credentials-box {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid rgba(216,180,90,.25);
+      border-radius: 14px;
+      background: rgba(8,12,22,.8);
+      text-align: center;
+      font-family: Arial, sans-serif;
+      line-height: 1.9;
+      font-size: 13px;
+    }
+
+    .credentials-box strong {
+      color: #d8b45a;
+      font-weight: normal;
+    }
+
+    .credentials-title {
+      color: #aaa;
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 
@@ -239,6 +278,33 @@
 
     <div class="error" id="loginError">
       يبدو أن هناك شيئًا غير صحيح...
+    </div>
+
+    <!-- أيقونة بيانات الشخص الثاني -->
+    <button
+      class="credentials-button"
+      onclick="toggleCredentials()"
+      title="بيانات الدخول"
+    >
+      🔑
+    </button>
+
+    <div class="credentials-box" id="credentialsBox">
+
+      <div class="credentials-title">
+        بيانات الدخول
+      </div>
+
+      <div>
+        اسم المستخدم:
+        <strong>hero</strong>
+      </div>
+
+      <div>
+        الرقم السري:
+        <strong>2026</strong>
+      </div>
+
     </div>
 
   </div>
@@ -311,9 +377,13 @@
      بيانات الدخول
      ===================================================== */
 
-  const CORRECT_USERNAME = "someone";
+  const USERS = {
 
-  const CORRECT_PASSWORD = "mystery";
+    someone: "1994",
+
+    hero: "2026"
+
+  };
 
 
   /* =====================================================
@@ -324,6 +394,30 @@
 
 
   let currentUser = null;
+
+
+  /* =====================================================
+     إظهار / إخفاء بيانات الشخص الثاني
+     ===================================================== */
+
+  function toggleCredentials() {
+
+    const box =
+      document.getElementById("credentialsBox");
+
+    if (box.style.display === "block") {
+
+      box.style.display = "none";
+
+    }
+
+    else {
+
+      box.style.display = "block";
+
+    }
+
+  }
 
 
   /* =====================================================
@@ -348,8 +442,8 @@
     /* فحص الاسم والرمز */
 
     if (
-      username !== CORRECT_USERNAME ||
-      password !== CORRECT_PASSWORD
+      !USERS[username] ||
+      USERS[username] !== password
     ) {
 
       error.innerText =
