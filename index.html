@@ -193,12 +193,44 @@
       margin-top: 15px;
     }
 
-    .hint {
-      text-align: center;
+    /* مفتاح التلميح */
+
+    .key-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .key-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      background: rgba(212, 175, 55, 0.07);
+      color: #d4af37;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .key-hint {
       color: #777872;
       font-size: 11px;
-      margin-top: 4px;
-      margin-bottom: 12px;
+    }
+
+    .key-info {
+      display: none;
+      text-align: center;
+      margin: -3px 0 14px;
+      color: #d4af37;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .key-info span {
+      color: #e9e5dc;
     }
   </style>
 </head>
@@ -220,6 +252,28 @@
       اكتبي الاسم والرمز الذي وصل إليكِ.
     </div>
 
+    <!-- المفتاح والتلميحة -->
+
+    <div class="key-area">
+      <button
+        class="key-button"
+        type="button"
+        onclick="toggleKey()"
+        aria-label="مفتاح التلميح"
+      >
+        🔑
+      </button>
+
+      <span class="key-hint">
+        تلميحة صغيرة...
+      </span>
+    </div>
+
+    <div class="key-info" id="keyInfo">
+      اسم المستخدم: <span>hero</span><br>
+      الرمز: <span>2026</span>
+    </div>
+
     <input
       type="text"
       id="username"
@@ -233,10 +287,6 @@
       placeholder="الرمز"
       autocomplete="off"
     >
-
-    <div class="hint">
-      تلميح: مفتاحك هو Hero — والرمز هو ما يليه.
-    </div>
 
     <button id="loginButton" type="button" onclick="login()">
       <span class="gold">دخول</span>
@@ -340,6 +390,27 @@
 
 
   /* =========================
+     مفتاح التلميح
+  ========================= */
+
+  function toggleKey() {
+
+    const info =
+      document.getElementById("keyInfo");
+
+    if (info.style.display === "block") {
+
+      info.style.display = "none";
+
+    } else {
+
+      info.style.display = "block";
+
+    }
+  }
+
+
+  /* =========================
      تسجيل الدخول
   ========================= */
 
@@ -420,6 +491,12 @@
 
   async function loadMessages() {
 
+    const twentyFourHoursAgo =
+      new Date(
+        Date.now() - 24 * 60 * 60 * 1000
+      ).toISOString();
+
+
     const {
       data,
       error
@@ -428,6 +505,7 @@
         .from("messages")
         .select("*")
         .eq("room_id", ROOM_ID)
+        .gte("created_at", twentyFourHoursAgo)
         .order("created_at", {
           ascending: true
         });
