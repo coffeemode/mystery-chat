@@ -6,7 +6,7 @@
 
   <title>الحكاية</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
 
   <style>
     * {
@@ -90,14 +90,20 @@
       background: rgba(216,180,90,.1);
     }
 
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
     .error {
       color: #d98989;
       text-align: center;
       margin-top: 15px;
       display: none;
-      line-height: 1.6;
+      line-height: 1.7;
       font-family: Arial, sans-serif;
       font-size: 13px;
+      white-space: pre-line;
     }
 
     #chatPage {
@@ -227,7 +233,7 @@
       autocomplete="off"
     >
 
-    <button onclick="login()">
+    <button id="loginButton" onclick="login()">
       <span class="gold">دخول</span>
     </button>
 
@@ -302,7 +308,7 @@
 
 
   /* =====================================================
-     إعدادات الدخول
+     بيانات الدخول
      ===================================================== */
 
   const CORRECT_USERNAME = "someone";
@@ -311,7 +317,7 @@
 
 
   /* =====================================================
-     اسم الغرفة
+     الغرفة
      ===================================================== */
 
   const ROOM_ID = "mystery-room-7f92k4";
@@ -335,8 +341,11 @@
     const error =
       document.getElementById("loginError");
 
+    const loginButton =
+      document.getElementById("loginButton");
 
-    /* التحقق من الاسم والرمز */
+
+    /* فحص الاسم والرمز */
 
     if (
       username !== CORRECT_USERNAME ||
@@ -354,32 +363,30 @@
 
     error.style.display = "none";
 
-
-    /* منع الضغط المتكرر */
-
-    const loginButton =
-      document.querySelector("#loginPage button");
-
     loginButton.disabled = true;
 
-    loginButton.innerText =
-      "جارٍ الدخول...";
+    loginButton.innerText = "جارٍ الدخول...";
 
-
-    /*
-      تسجيل الدخول المجهول إلى Supabase
-    */
 
     try {
 
-      const { data, error: authError } =
+      /* تسجيل الدخول المجهول */
+
+      const result =
         await supabaseClient.auth.signInAnonymously();
 
+
+      const data = result.data;
+
+      const authError = result.error;
+
+
+      /* إذا حصل خطأ */
 
       if (authError) {
 
         console.error(
-          "Supabase Auth Error:",
+          "Supabase Error:",
           authError
         );
 
@@ -397,10 +404,12 @@
       }
 
 
+      /* التأكد من وجود المستخدم */
+
       if (!data || !data.user) {
 
         error.innerText =
-          "تم الاتصال ولكن لم يتم إنشاء المستخدم المجهول.";
+          "لم يتم إنشاء جلسة الدخول.";
 
         error.style.display = "block";
 
@@ -415,7 +424,7 @@
       currentUser = data.user;
 
 
-      /* الانتقال إلى صفحة الشات */
+      /* الانتقال إلى الشات */
 
       document.getElementById("loginPage").style.display =
         "none";
@@ -437,12 +446,12 @@
     catch (err) {
 
       console.error(
-        "Connection Error:",
+        "Unexpected Error:",
         err
       );
 
       error.innerText =
-        "حدث خطأ أثناء الاتصال:\n" +
+        "حدث خطأ:\n" +
         err.message;
 
       error.style.display = "block";
@@ -457,7 +466,7 @@
 
 
   /* =====================================================
-     تحميل الرسائل القديمة
+     تحميل الرسائل
      ===================================================== */
 
   async function loadMessages() {
@@ -475,12 +484,12 @@
     if (error) {
 
       console.error(
-        "Messages Load Error:",
+        "Load Messages Error:",
         error
       );
 
       document.getElementById("status").innerText =
-        "خطأ في تحميل الرسائل";
+        "تعذر تحميل الرسائل";
 
       return;
     }
@@ -505,7 +514,7 @@
 
 
   /* =====================================================
-     استقبال الرسائل الجديدة
+     الرسائل الجديدة
      ===================================================== */
 
   function listenForMessages() {
@@ -542,4 +551,254 @@
 
         if (status === "SUBSCRIBED") {
 
-          document.getElementById("status
+          document.getElementById("status").innerText =
+            "متصل الآن";
+
+        }
+
+        else if (status === "CHANNEL_ERROR") {
+
+          document.getElementById("status").innerText =
+            "مشكلة في الاتصال";
+
+        }
+
+      });
+
+  }
+
+
+  /* =====================================================
+     عرض الرسالة
+     ===================================================== */
+
+  function displayMessage(message) {
+
+    const container =
+      document.getElementById("messages");
+
+
+    if (
+      document.querySelector(
+        `[data-message-id="${message.id}"]`
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.classList.add("message");
+
+
+    if (
+      currentUser &&
+      message.sender === currentUser.id
+    ) {
+
+      div.classList.add("mine");
+
+    }
+
+    else {
+
+      div.classList.add("other");
+
+    }
+
+
+    div.setAttribute(
+      "data-message-id",
+      message.id
+    );
+
+
+    const text =
+      document.createElement("div");
+
+    text.innerText =
+      message.content;
+
+
+    const time =
+      document.createElement("span");
+
+    time.className = "time";
+
+
+    const date =
+      new Date(message.created_at);
+
+
+    time.innerText =
+      date.toLocaleTimeString(
+        "ar-SA",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+
+    div.appendChild(text);
+
+    div.appendChild(time);
+
+    container.appendChild(div);
+
+  }
+
+
+  /* =====================================================
+     إرسال رسالة
+     ===================================================== */
+
+  async function sendMessage() {
+
+    const input =
+      document.getElementById("messageInput");
+
+    const content =
+      input.value.trim();
+
+
+    if (!content || !currentUser) {
+
+      return;
+
+    }
+
+
+    input.disabled = true;
+
+
+    const { error } =
+      await supabaseClient
+        .from("messages")
+        .insert({
+
+          room_id: ROOM_ID,
+
+          sender: currentUser.id,
+
+          content: content
+
+        });
+
+
+    input.disabled = false;
+
+
+    if (error) {
+
+      console.error(
+        "Send Message Error:",
+        error
+      );
+
+      alert(
+        "لم يتم إرسال الرسالة:\n" +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    input.value = "";
+
+    input.focus();
+
+  }
+
+
+  /* =====================================================
+     Enter للإرسال
+     ===================================================== */
+
+  document
+    .getElementById("messageInput")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     النزول لآخر رسالة
+     ===================================================== */
+
+  function scrollToBottom() {
+
+    const messages =
+      document.getElementById("messages");
+
+
+    setTimeout(() => {
+
+      messages.scrollTop =
+        messages.scrollHeight;
+
+    }, 50);
+
+  }
+
+
+  /* =====================================================
+     الخروج
+     ===================================================== */
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+
+    document.getElementById("chatPage").style.display =
+      "none";
+
+    document.getElementById("loginPage").style.display =
+      "block";
+
+
+    document.getElementById("messages").innerHTML =
+      "";
+
+
+    document.getElementById("username").value =
+      "";
+
+    document.getElementById("password").value =
+      "";
+
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    loginButton.disabled = false;
+
+    loginButton.innerText = "دخول";
+
+  }
+
+</script>
+
+</body>
+</html>
