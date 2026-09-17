@@ -6,7 +6,7 @@
 
   <title>الحكاية</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -17,9 +17,9 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at top, #17213a 0%, #090d18 55%, #05070d 100%);
-      color: #f5f1e8;
-      font-family: Georgia, "Times New Roman", serif;
+        radial-gradient(circle at top, #17233d 0%, #080d18 55%, #050811 100%);
+      color: #f4f0e8;
+      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -28,82 +28,90 @@
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
     }
 
-    .card {
-      background: rgba(13, 19, 34, 0.94);
+    .box {
+      background: rgba(10, 17, 31, 0.94);
       border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 22px;
-      padding: 30px 22px;
-      box-shadow: 0 0 35px rgba(0,0,0,0.45);
-    }
-
-    .gold {
-      color: #d8b45a;
+      padding: 30px 24px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.45);
     }
 
     h1 {
       text-align: center;
+      color: #d4af37;
       font-size: 28px;
-      font-weight: normal;
-      margin: 0 0 12px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #aaa;
-      line-height: 1.8;
-      margin-bottom: 28px;
+      margin-top: 0;
+      margin-bottom: 25px;
     }
 
     input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 14px;
       margin-bottom: 12px;
       border-radius: 12px;
-      border: 1px solid rgba(212,175,55,.3);
-      background: #080c16;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: #111a2c;
       color: white;
-      font-size: 16px;
       outline: none;
+      font-size: 16px;
       text-align: right;
     }
 
     input:focus {
-      border-color: #d8b45a;
+      border-color: #d4af37;
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      border: 1px solid #d8b45a;
+      padding: 13px;
+      border: none;
       border-radius: 12px;
-      background: transparent;
-      color: #d8b45a;
+      background: #d4af37;
+      color: #08101d;
       font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      transition: .2s;
+      margin-top: 5px;
     }
 
     button:hover {
-      background: rgba(216,180,90,.1);
+      opacity: 0.9;
     }
 
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
+    .key-button {
+      width: 45px;
+      height: 45px;
+      padding: 0;
+      margin: 15px auto 0;
+      display: block;
+      border-radius: 50%;
+      font-size: 18px;
     }
 
-    .error {
-      color: #d98989;
-      text-align: center;
-      margin-top: 15px;
+    .credentials {
       display: none;
-      line-height: 1.7;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      white-space: pre-line;
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 14px;
+      background: rgba(212, 175, 55, 0.06);
+      color: #eee;
+      line-height: 1.9;
+      text-align: center;
+    }
+
+    .credentials strong {
+      color: #d4af37;
+    }
+
+    #loginError {
+      color: #e6a4a4;
+      text-align: center;
+      margin-top: 12px;
+      min-height: 20px;
     }
 
     #chatPage {
@@ -111,63 +119,71 @@
     }
 
     .chat-header {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 18px;
+      gap: 10px;
     }
 
-    .chat-header h2 {
-      font-weight: normal;
-      margin: 0 0 5px;
-      color: #d8b45a;
+    .chat-title {
+      color: #d4af37;
+      font-size: 22px;
+      font-weight: bold;
     }
 
-    .status {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      color: #777;
+    .logout {
+      width: auto;
+      padding: 8px 14px;
+      margin: 0;
+      font-size: 13px;
+      background: transparent;
+      color: #d4af37;
+      border: 1px solid rgba(212, 175, 55, 0.4);
     }
 
-    .messages {
-      height: 420px;
+    #messages {
+      height: 400px;
       overflow-y: auto;
-      padding: 10px 4px;
+      padding: 10px;
       margin-bottom: 15px;
-      scroll-behavior: smooth;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(212, 175, 55, 0.15);
     }
 
     .message {
-      max-width: 78%;
+      margin-bottom: 12px;
       padding: 11px 14px;
-      margin: 8px 0;
       border-radius: 15px;
+      max-width: 80%;
       line-height: 1.6;
       word-wrap: break-word;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
     }
 
-    .mine {
+    .my-message {
       margin-right: auto;
       margin-left: 0;
-      background: #b99a4b;
-      color: #101010;
-      border-bottom-right-radius: 4px;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.25);
     }
 
-    .other {
+    .other-message {
       margin-left: auto;
       margin-right: 0;
-      background: #1c263d;
-      color: #eee;
-      border: 1px solid rgba(255,255,255,.08);
-      border-bottom-left-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    .time {
-      display: block;
-      font-size: 9px;
-      opacity: .55;
-      margin-top: 3px;
+    .sender-name {
+      font-size: 11px;
+      color: #d4af37;
+      margin-bottom: 3px;
+    }
+
+    .message-time {
+      font-size: 10px;
+      color: #888;
+      margin-top: 5px;
     }
 
     .send-area {
@@ -180,64 +196,16 @@
       flex: 1;
     }
 
-    .send-area button {
-      width: 75px;
-      flex-shrink: 0;
+    .send-button {
+      width: 85px;
+      margin: 0;
     }
 
-    .logout {
-      margin-top: 15px;
-      border-color: rgba(255,255,255,.12);
-      color: #777;
-      font-size: 12px;
-      padding: 9px;
-    }
-
-    .small-note {
+    #status {
       text-align: center;
-      color: #666;
-      font-family: Arial, sans-serif;
-      font-size: 11px;
-      margin-top: 15px;
-    }
-
-    /* أيقونة بيانات الدخول */
-    .credentials-button {
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      margin: 18px auto 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      border: 1px solid rgba(216,180,90,.55);
-      color: #d8b45a;
-      font-size: 18px;
-      font-family: Arial, sans-serif;
-    }
-
-    .credentials-box {
-      display: none;
-      margin-top: 12px;
-      padding: 14px;
-      border: 1px solid rgba(216,180,90,.25);
-      border-radius: 14px;
-      background: rgba(8,12,22,.8);
-      text-align: center;
-      font-family: Arial, sans-serif;
-      line-height: 1.9;
-      font-size: 13px;
-    }
-
-    .credentials-box strong {
-      color: #d8b45a;
-      font-weight: normal;
-    }
-
-    .credentials-title {
       color: #aaa;
-      margin-bottom: 5px;
+      font-size: 12px;
+      margin-top: 12px;
     }
   </style>
 </head>
@@ -246,55 +214,32 @@
 
 <div class="container">
 
-  <!-- صفحة الدخول -->
-  <div class="card" id="loginPage">
+  <!-- LOGIN -->
+  <div class="box" id="loginPage">
 
-    <h1>
-      هناك شيءٌ آخر...
-    </h1>
-
-    <div class="subtitle">
-      بعض الأبواب لا تُفتح إلا بكلمة صغيرة.<br>
-      اكتبي الاسم والرمز الذي وصل إليكِ.
-    </div>
+    <h1>حكاية صغيرة...</h1>
 
     <input
       type="text"
       id="username"
-      placeholder="الاسم"
+      placeholder="اسم المستخدم"
       autocomplete="off"
     >
 
     <input
       type="password"
       id="password"
-      placeholder="الرمز"
+      placeholder="الرقم السري"
       autocomplete="off"
     >
 
-    <button id="loginButton" onclick="login()">
-      <span class="gold">دخول</span>
-    </button>
+    <button onclick="login()">دخول</button>
 
-    <div class="error" id="loginError">
-      يبدو أن هناك شيئًا غير صحيح...
-    </div>
+    <div id="loginError"></div>
 
-    <!-- أيقونة بيانات الشخص الثاني -->
-    <button
-      class="credentials-button"
-      onclick="toggleCredentials()"
-      title="بيانات الدخول"
-    >
-      🔑
-    </button>
+    <button class="key-button" onclick="toggleCredentials()">🔑</button>
 
-    <div class="credentials-box" id="credentialsBox">
-
-      <div class="credentials-title">
-        بيانات الدخول
-      </div>
-
+    <div class="credentials" id="credentials">
       <div>
         اسم المستخدم:
         <strong>hero</strong>
@@ -304,48 +249,50 @@
         الرقم السري:
         <strong>2026</strong>
       </div>
-
     </div>
 
   </div>
 
 
-  <!-- صفحة الدردشة -->
-  <div class="card" id="chatPage">
+  <!-- CHAT -->
+  <div class="box" id="chatPage">
 
     <div class="chat-header">
 
-      <h2>الصفحة الأخيرة</h2>
-
-      <div class="status" id="status">
-        جارٍ الاتصال...
+      <div class="chat-title">
+        الحكاية
       </div>
+
+      <button class="logout" onclick="logout()">
+        خروج
+      </button>
 
     </div>
 
-    <div class="messages" id="messages"></div>
+    <div id="messages"></div>
 
     <div class="send-area">
 
       <input
         type="text"
         id="messageInput"
-        placeholder="اكتبي شيئًا..."
+        placeholder="اكتب رسالتك..."
         autocomplete="off"
+        onkeydown="if(event.key === 'Enter') sendMessage()"
       >
 
-      <button onclick="sendMessage()">
+      <button
+        class="send-button"
+        onclick="sendMessage()"
+        id="sendButton"
+      >
         إرسال
       </button>
 
     </div>
 
-    <button class="logout" onclick="logout()">
-      الخروج
-    </button>
-
-    <div class="small-note">
-      هذه المحادثة خاصة بين الطرفين.
+    <div id="status">
+      متصل
     </div>
 
   </div>
@@ -355,9 +302,9 @@
 
 <script>
 
-  /* =====================================================
-     إعدادات Supabase
-     ===================================================== */
+  /* =========================
+     SUPABASE
+  ========================= */
 
   const SUPABASE_URL =
     "https://noeakvrotdsanqzrkutj.supabase.co";
@@ -365,64 +312,55 @@
   const SUPABASE_KEY =
     "sb_publishable_vY2JWVsg-4lvQTQO_OXrEw_WCOWMB_c";
 
-
   const supabaseClient =
-    supabase.createClient(
+    window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
 
 
-  /* =====================================================
-     بيانات الدخول
-     ===================================================== */
+  /* =========================
+     USERS
+  ========================= */
 
   const USERS = {
-
     someone: "1994",
-
     hero: "2026"
-
   };
 
 
-  /* =====================================================
-     الغرفة
-     ===================================================== */
+  /* =========================
+     ROOM
+  ========================= */
 
   const ROOM_ID = "mystery-room-7f92k4";
 
 
   let currentUser = null;
+  let currentUsername = null;
+  let realtimeChannel = null;
 
 
-  /* =====================================================
-     إظهار / إخفاء بيانات الشخص الثاني
-     ===================================================== */
+  /* =========================
+     SHOW / HIDE CREDENTIALS
+  ========================= */
 
   function toggleCredentials() {
 
     const box =
-      document.getElementById("credentialsBox");
+      document.getElementById("credentials");
 
     if (box.style.display === "block") {
-
       box.style.display = "none";
-
-    }
-
-    else {
-
+    } else {
       box.style.display = "block";
-
     }
-
   }
 
 
-  /* =====================================================
-     تسجيل الدخول
-     ===================================================== */
+  /* =========================
+     LOGIN
+  ========================= */
 
   async function login() {
 
@@ -430,95 +368,48 @@
       document.getElementById("username").value.trim();
 
     const password =
-      document.getElementById("password").value.trim();
+      document.getElementById("password").value;
 
-    const error =
+    const errorBox =
       document.getElementById("loginError");
 
-    const loginButton =
-      document.getElementById("loginButton");
+    errorBox.textContent = "";
 
 
-    /* فحص الاسم والرمز */
+    if (!username || !password) {
 
-    if (
-      !USERS[username] ||
-      USERS[username] !== password
-    ) {
-
-      error.innerText =
-        "يبدو أن هناك شيئًا غير صحيح...";
-
-      error.style.display = "block";
+      errorBox.textContent =
+        "اكتب اسم المستخدم والرقم السري.";
 
       return;
     }
 
 
-    error.style.display = "none";
+    if (!USERS[username] || USERS[username] !== password) {
 
-    loginButton.disabled = true;
+      errorBox.textContent =
+        "اسم المستخدم أو الرقم السري غير صحيح.";
 
-    loginButton.innerText = "جارٍ الدخول...";
+      return;
+    }
 
 
     try {
 
-      /* تسجيل الدخول المجهول */
-
-      const result =
-        await supabaseClient.auth.signInAnonymously();
-
-
-      const data = result.data;
-
-      const authError = result.error;
+      const {
+        data,
+        error
+      } = await supabaseClient.auth.signInAnonymously();
 
 
-      /* إذا حصل خطأ */
-
-      if (authError) {
-
-        console.error(
-          "Supabase Error:",
-          authError
-        );
-
-        error.innerText =
-          "خطأ Supabase:\n" +
-          authError.message;
-
-        error.style.display = "block";
-
-        loginButton.disabled = false;
-
-        loginButton.innerText = "دخول";
-
-        return;
-      }
-
-
-      /* التأكد من وجود المستخدم */
-
-      if (!data || !data.user) {
-
-        error.innerText =
-          "لم يتم إنشاء جلسة الدخول.";
-
-        error.style.display = "block";
-
-        loginButton.disabled = false;
-
-        loginButton.innerText = "دخول";
-
-        return;
+      if (error) {
+        throw error;
       }
 
 
       currentUser = data.user;
+      currentUsername = username;
 
-
-      /* الانتقال إلى الشات */
 
       document.getElementById("loginPage").style.display =
         "none";
@@ -527,281 +418,206 @@
         "block";
 
 
-      document.getElementById("status").innerText =
-        "متصل";
-
-
       await loadMessages();
 
-      listenForMessages();
+      startRealtime();
 
+    } catch (error) {
+
+      console.error(error);
+
+      errorBox.textContent =
+        "حدث خطأ في تسجيل الدخول: " +
+        error.message;
     }
-
-    catch (err) {
-
-      console.error(
-        "Unexpected Error:",
-        err
-      );
-
-      error.innerText =
-        "حدث خطأ:\n" +
-        err.message;
-
-      error.style.display = "block";
-
-      loginButton.disabled = false;
-
-      loginButton.innerText = "دخول";
-
-    }
-
   }
 
 
-  /* =====================================================
-     تحميل الرسائل
-     ===================================================== */
+  /* =========================
+     LOAD MESSAGES
+  ========================= */
 
   async function loadMessages() {
 
-    const { data, error } =
-      await supabaseClient
-        .from("messages")
-        .select("*")
-        .eq("room_id", ROOM_ID)
-        .order("created_at", {
-          ascending: true
-        });
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq("room_id", ROOM_ID)
+      .order("created_at", {
+        ascending: true
+      });
 
 
     if (error) {
 
-      console.error(
-        "Load Messages Error:",
-        error
-      );
+      console.error(error);
 
-      document.getElementById("status").innerText =
-        "تعذر تحميل الرسائل";
+      document.getElementById("status").textContent =
+        "تعذر تحميل الرسائل.";
 
       return;
     }
 
 
-    const messages =
+    displayMessages(data || []);
+  }
+
+
+  /* =========================
+     DISPLAY MESSAGES
+  ========================= */
+
+  function displayMessages(messages) {
+
+    const box =
       document.getElementById("messages");
 
-    messages.innerHTML = "";
+    box.innerHTML = "";
 
 
-    data.forEach(message => {
+    messages.forEach(message => {
 
-      displayMessage(message);
+      const div =
+        document.createElement("div");
+
+      const sender =
+        String(message.sender || "");
+
+      const mySender =
+        currentUser &&
+        sender === String(currentUser.id);
+
+
+      div.className =
+        "message " +
+        (mySender
+          ? "my-message"
+          : "other-message");
+
+
+      const name =
+        document.createElement("div");
+
+      name.className =
+        "sender-name";
+
+      name.textContent =
+        mySender
+          ? currentUsername
+          : "الطرف الآخر";
+
+
+      const content =
+        document.createElement("div");
+
+      content.textContent =
+        message.content || "";
+
+
+      const time =
+        document.createElement("div");
+
+      time.className =
+        "message-time";
+
+
+      if (message.created_at) {
+
+        const date =
+          new Date(message.created_at);
+
+        time.textContent =
+          date.toLocaleTimeString(
+            "ar-SA",
+            {
+              hour: "2-digit",
+              minute: "2-digit"
+            }
+          );
+      }
+
+
+      div.appendChild(name);
+      div.appendChild(content);
+      div.appendChild(time);
+
+      box.appendChild(div);
 
     });
 
 
-    scrollToBottom();
-
+    box.scrollTop =
+      box.scrollHeight;
   }
 
 
-  /* =====================================================
-     الرسائل الجديدة
-     ===================================================== */
-
-  function listenForMessages() {
-
-    supabaseClient
-      .channel("mystery-chat-room")
-
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: "room_id=eq." + ROOM_ID
-        },
-
-        payload => {
-
-          displayMessage(payload.new);
-
-          scrollToBottom();
-
-        }
-
-      )
-
-      .subscribe(status => {
-
-        console.log(
-          "Realtime Status:",
-          status
-        );
-
-
-        if (status === "SUBSCRIBED") {
-
-          document.getElementById("status").innerText =
-            "متصل الآن";
-
-        }
-
-        else if (status === "CHANNEL_ERROR") {
-
-          document.getElementById("status").innerText =
-            "مشكلة في الاتصال";
-
-        }
-
-      });
-
-  }
-
-
-  /* =====================================================
-     عرض الرسالة
-     ===================================================== */
-
-  function displayMessage(message) {
-
-    const container =
-      document.getElementById("messages");
-
-
-    if (
-      document.querySelector(
-        `[data-message-id="${message.id}"]`
-      )
-    ) {
-
-      return;
-
-    }
-
-
-    const div =
-      document.createElement("div");
-
-
-    div.classList.add("message");
-
-
-    if (
-      currentUser &&
-      message.sender === currentUser.id
-    ) {
-
-      div.classList.add("mine");
-
-    }
-
-    else {
-
-      div.classList.add("other");
-
-    }
-
-
-    div.setAttribute(
-      "data-message-id",
-      message.id
-    );
-
-
-    const text =
-      document.createElement("div");
-
-    text.innerText =
-      message.content;
-
-
-    const time =
-      document.createElement("span");
-
-    time.className = "time";
-
-
-    const date =
-      new Date(message.created_at);
-
-
-    time.innerText =
-      date.toLocaleTimeString(
-        "ar-SA",
-        {
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      );
-
-
-    div.appendChild(text);
-
-    div.appendChild(time);
-
-    container.appendChild(div);
-
-  }
-
-
-  /* =====================================================
-     إرسال رسالة
-     ===================================================== */
+  /* =========================
+     SEND MESSAGE
+  ========================= */
 
   async function sendMessage() {
 
     const input =
       document.getElementById("messageInput");
 
+    const button =
+      document.getElementById("sendButton");
+
     const content =
       input.value.trim();
 
 
-    if (!content || !currentUser) {
-
+    if (!content) {
       return;
-
     }
 
 
+    if (!currentUser) {
+
+      alert("لم يتم تسجيل الدخول.");
+
+      return;
+    }
+
+
+    button.disabled = true;
     input.disabled = true;
 
 
-    const { error } =
-      await supabaseClient
-        .from("messages")
-        .insert({
+    const {
+      error
+    } = await supabaseClient
+      .from("messages")
+      .insert({
+        room_id: ROOM_ID,
 
-          room_id: ROOM_ID,
+        /*
+          sender في قاعدة البيانات عندك TEXT
+          لذلك نحول UUID إلى TEXT
+        */
+        sender: currentUser.id.toString(),
 
-          sender: currentUser.id,
-
-          content: content
-
-        });
+        content: content
+      });
 
 
+    button.disabled = false;
     input.disabled = false;
 
 
     if (error) {
 
-      console.error(
-        "Send Message Error:",
-        error
-      );
+      console.error(error);
 
       alert(
-        "لم يتم إرسال الرسالة:\n" +
+        "حدث خطأ أثناء إرسال الرسالة:\n\n" +
         error.message
       );
 
       return;
-
     }
 
 
@@ -809,60 +625,69 @@
 
     input.focus();
 
+
+    await loadMessages();
   }
 
 
-  /* =====================================================
-     Enter للإرسال
-     ===================================================== */
+  /* =========================
+     REALTIME
+  ========================= */
 
-  document
-    .getElementById("messageInput")
-    .addEventListener(
-      "keydown",
-      function(event) {
+  function startRealtime() {
 
-        if (event.key === "Enter") {
-
-          event.preventDefault();
-
-          sendMessage();
-
-        }
-
-      }
-    );
+    if (realtimeChannel) {
+      supabaseClient.removeChannel(
+        realtimeChannel
+      );
+    }
 
 
-  /* =====================================================
-     النزول لآخر رسالة
-     ===================================================== */
+    realtimeChannel =
+      supabaseClient
+        .channel("mystery-chat-room")
 
-  function scrollToBottom() {
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages",
+            filter:
+              "room_id=eq." + ROOM_ID
+          },
+          function(payload) {
 
-    const messages =
-      document.getElementById("messages");
+            loadMessages();
 
+          }
+        )
 
-    setTimeout(() => {
-
-      messages.scrollTop =
-        messages.scrollHeight;
-
-    }, 50);
-
+        .subscribe();
   }
 
 
-  /* =====================================================
-     الخروج
-     ===================================================== */
+  /* =========================
+     LOGOUT
+  ========================= */
 
   async function logout() {
 
+    if (realtimeChannel) {
+
+      await supabaseClient.removeChannel(
+        realtimeChannel
+      );
+
+      realtimeChannel = null;
+    }
+
+
     await supabaseClient.auth.signOut();
 
+
     currentUser = null;
+    currentUsername = null;
 
 
     document.getElementById("chatPage").style.display =
@@ -875,20 +700,11 @@
     document.getElementById("messages").innerHTML =
       "";
 
-
-    document.getElementById("username").value =
+    document.getElementById("messageInput").value =
       "";
 
     document.getElementById("password").value =
       "";
-
-
-    const loginButton =
-      document.getElementById("loginButton");
-
-    loginButton.disabled = false;
-
-    loginButton.innerText = "دخول";
 
   }
 
