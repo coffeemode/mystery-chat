@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>الحكاية</title>
+  <title>هناك شيءٌ آخر...</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -17,100 +18,93 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at top, #17233d 0%, #080d18 55%, #050811 100%);
-      color: #f4f0e8;
-      font-family: Arial, sans-serif;
+        radial-gradient(circle at top, #18243d 0%, #0b1220 45%, #050914 100%);
+      color: #f4f1e8;
+      font-family: Georgia, "Times New Roman", serif;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
     }
 
-    .container {
+    .page {
       width: 100%;
       max-width: 650px;
     }
 
     .box {
-      background: rgba(10, 17, 31, 0.94);
+      background: rgba(7, 14, 28, 0.94);
       border: 1px solid rgba(212, 175, 55, 0.35);
-      border-radius: 22px;
-      padding: 30px 24px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.45);
+      border-radius: 20px;
+      padding: 38px 28px;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.55),
+        inset 0 0 30px rgba(212, 175, 55, 0.025);
     }
 
     h1 {
       text-align: center;
       color: #d4af37;
-      font-size: 28px;
-      margin-top: 0;
-      margin-bottom: 25px;
+      font-size: 30px;
+      font-weight: normal;
+      margin: 0 0 18px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #e9e5dc;
+      font-size: 16px;
+      line-height: 2;
+      margin-bottom: 30px;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
       border-radius: 12px;
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      background: #111a2c;
-      color: white;
-      outline: none;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      background: rgba(255, 255, 255, 0.045);
+      color: #ffffff;
       font-size: 16px;
-      text-align: right;
+      outline: none;
+      font-family: inherit;
+    }
+
+    input::placeholder {
+      color: #aaa7a0;
     }
 
     input:focus {
-      border-color: #d4af37;
+      border-color: rgba(212, 175, 55, 0.75);
     }
 
     button {
       width: 100%;
-      padding: 13px;
-      border: none;
+      border: 1px solid rgba(212, 175, 55, 0.5);
       border-radius: 12px;
-      background: #d4af37;
-      color: #08101d;
+      padding: 13px;
+      background: rgba(212, 175, 55, 0.08);
+      color: #d4af37;
       font-size: 16px;
-      font-weight: bold;
+      font-family: inherit;
       cursor: pointer;
-      margin-top: 5px;
+      transition: 0.2s;
     }
 
     button:hover {
-      opacity: 0.9;
+      background: rgba(212, 175, 55, 0.16);
     }
 
-    .key-button {
-      width: 45px;
-      height: 45px;
-      padding: 0;
-      margin: 15px auto 0;
-      display: block;
-      border-radius: 50%;
-      font-size: 18px;
-    }
-
-    .credentials {
-      display: none;
-      margin-top: 15px;
-      padding: 15px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 14px;
-      background: rgba(212, 175, 55, 0.06);
-      color: #eee;
-      line-height: 1.9;
-      text-align: center;
-    }
-
-    .credentials strong {
+    .gold {
       color: #d4af37;
     }
 
-    #loginError {
-      color: #e6a4a4;
+    .error {
       text-align: center;
-      margin-top: 12px;
+      color: #b9a9a0;
+      font-size: 13px;
+      margin-top: 16px;
       min-height: 20px;
     }
 
@@ -119,76 +113,60 @@
     }
 
     .chat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-      gap: 10px;
+      margin-bottom: 20px;
     }
 
-    .chat-title {
+    .chat-header h2 {
       color: #d4af37;
-      font-size: 22px;
-      font-weight: bold;
+      font-size: 27px;
+      font-weight: normal;
+      margin: 0 0 8px;
     }
 
-    .logout {
-      width: auto;
-      padding: 8px 14px;
-      margin: 0;
-      font-size: 13px;
-      background: transparent;
-      color: #d4af37;
-      border: 1px solid rgba(212, 175, 55, 0.4);
+    .status {
+      color: #aaa7a0;
+      font-size: 12px;
     }
 
-    #messages {
+    .messages {
       height: 400px;
       overflow-y: auto;
-      padding: 10px;
-      margin-bottom: 15px;
+      padding: 12px;
       border-radius: 15px;
-      background: rgba(255, 255, 255, 0.025);
       border: 1px solid rgba(212, 175, 55, 0.15);
+      background: rgba(255, 255, 255, 0.025);
+      margin-bottom: 15px;
     }
 
     .message {
-      margin-bottom: 12px;
-      padding: 11px 14px;
-      border-radius: 15px;
+      width: fit-content;
       max-width: 80%;
-      line-height: 1.6;
-      word-wrap: break-word;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      line-height: 1.7;
+      word-break: break-word;
     }
 
-    .my-message {
-      margin-right: auto;
-      margin-left: 0;
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-    }
-
-    .other-message {
+    .mine {
       margin-left: auto;
       margin-right: 0;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(212, 175, 55, 0.13);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      color: #f4f1e8;
     }
 
-    .sender-name {
-      font-size: 11px;
-      color: #d4af37;
-      margin-bottom: 3px;
-    }
-
-    .message-time {
-      font-size: 10px;
-      color: #888;
-      margin-top: 5px;
+    .theirs {
+      margin-right: auto;
+      margin-left: 0;
+      background: rgba(255, 255, 255, 0.07);
+      color: #eeeeee;
     }
 
     .send-area {
       display: flex;
       gap: 8px;
+      align-items: center;
     }
 
     .send-area input {
@@ -196,103 +174,111 @@
       flex: 1;
     }
 
-    .send-button {
+    .send-area button {
       width: 85px;
-      margin: 0;
+      flex-shrink: 0;
     }
 
-    #status {
+    .logout {
+      margin-top: 15px;
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #aaa7a0;
+    }
+
+    .small-note {
       text-align: center;
-      color: #aaa;
-      font-size: 12px;
-      margin-top: 12px;
+      color: #777872;
+      font-size: 11px;
+      margin-top: 15px;
     }
   </style>
 </head>
 
+
 <body>
 
-<div class="container">
+<div class="page">
 
-  <!-- LOGIN -->
+  <!-- صفحة الدخول -->
+
   <div class="box" id="loginPage">
 
-    <h1>حكاية صغيرة...</h1>
+    <h1>
+      هناك شيءٌ آخر...
+    </h1>
+
+    <div class="subtitle">
+      بعض الأبواب لا تُفتح إلا بكلمة صغيرة.<br>
+      اكتبي الاسم والرمز الذي وصل إليكِ.
+    </div>
 
     <input
       type="text"
       id="username"
-      placeholder="اسم المستخدم"
+      placeholder="الاسم"
       autocomplete="off"
     >
 
     <input
       type="password"
       id="password"
-      placeholder="الرقم السري"
+      placeholder="الرمز"
       autocomplete="off"
     >
 
-    <button onclick="login()">دخول</button>
+    <button id="loginButton" onclick="login()">
+      <span class="gold">دخول</span>
+    </button>
 
-    <div id="loginError"></div>
-
-    <button class="key-button" onclick="toggleCredentials()">🔑</button>
-
-    <div class="credentials" id="credentials">
-      <div>
-        اسم المستخدم:
-        <strong>hero</strong>
-      </div>
-
-      <div>
-        الرقم السري:
-        <strong>2026</strong>
-      </div>
+    <div class="error" id="loginError">
+      يبدو أن هناك شيئًا غير صحيح...
     </div>
 
   </div>
 
 
-  <!-- CHAT -->
+  <!-- صفحة المحادثة -->
+
   <div class="box" id="chatPage">
 
     <div class="chat-header">
 
-      <div class="chat-title">
-        الحكاية
-      </div>
+      <h2>الصفحة الأخيرة</h2>
 
-      <button class="logout" onclick="logout()">
-        خروج
-      </button>
+      <div class="status" id="status">
+        جارٍ الاتصال...
+      </div>
 
     </div>
 
-    <div id="messages"></div>
+
+    <div class="messages" id="messages"></div>
+
 
     <div class="send-area">
 
       <input
         type="text"
         id="messageInput"
-        placeholder="اكتب رسالتك..."
+        placeholder="اكتبي شيئًا..."
         autocomplete="off"
-        onkeydown="if(event.key === 'Enter') sendMessage()"
       >
 
-      <button
-        class="send-button"
-        onclick="sendMessage()"
-        id="sendButton"
-      >
+      <button onclick="sendMessage()">
         إرسال
       </button>
 
     </div>
 
-    <div id="status">
-      متصل
+
+    <button class="logout" onclick="logout()">
+      الخروج
+    </button>
+
+
+    <div class="small-note">
+      هذه المحادثة خاصة بين الطرفين.
     </div>
 
   </div>
@@ -320,7 +306,7 @@
 
 
   /* =========================
-     USERS
+     الحسابات
   ========================= */
 
   const USERS = {
@@ -330,10 +316,11 @@
 
 
   /* =========================
-     ROOM
+     الغرفة
   ========================= */
 
-  const ROOM_ID = "mystery-room-7f92k4";
+  const ROOM_ID =
+    "mystery-room-7f92k4";
 
 
   let currentUser = null;
@@ -342,24 +329,7 @@
 
 
   /* =========================
-     SHOW / HIDE CREDENTIALS
-  ========================= */
-
-  function toggleCredentials() {
-
-    const box =
-      document.getElementById("credentials");
-
-    if (box.style.display === "block") {
-      box.style.display = "none";
-    } else {
-      box.style.display = "block";
-    }
-  }
-
-
-  /* =========================
-     LOGIN
+     تسجيل الدخول
   ========================= */
 
   async function login() {
@@ -373,25 +343,20 @@
     const errorBox =
       document.getElementById("loginError");
 
+
+    if (
+      !USERS[username] ||
+      USERS[username] !== password
+    ) {
+
+      errorBox.textContent =
+        "يبدو أن هناك شيئًا غير صحيح...";
+
+      return;
+    }
+
+
     errorBox.textContent = "";
-
-
-    if (!username || !password) {
-
-      errorBox.textContent =
-        "اكتب اسم المستخدم والرقم السري.";
-
-      return;
-    }
-
-
-    if (!USERS[username] || USERS[username] !== password) {
-
-      errorBox.textContent =
-        "اسم المستخدم أو الرقم السري غير صحيح.";
-
-      return;
-    }
 
 
     try {
@@ -399,7 +364,8 @@
       const {
         data,
         error
-      } = await supabaseClient.auth.signInAnonymously();
+      } =
+        await supabaseClient.auth.signInAnonymously();
 
 
       if (error) {
@@ -418,23 +384,27 @@
         "block";
 
 
+      document.getElementById("status").textContent =
+        "متصل";
+
+
       await loadMessages();
 
       startRealtime();
 
-    } catch (error) {
 
-      console.error(error);
+    } catch (err) {
+
+      console.error(err);
 
       errorBox.textContent =
-        "حدث خطأ في تسجيل الدخول: " +
-        error.message;
+        "حدث خطأ: " + err.message;
     }
   }
 
 
   /* =========================
-     LOAD MESSAGES
+     تحميل الرسائل
   ========================= */
 
   async function loadMessages() {
@@ -442,13 +412,14 @@
     const {
       data,
       error
-    } = await supabaseClient
-      .from("messages")
-      .select("*")
-      .eq("room_id", ROOM_ID)
-      .order("created_at", {
-        ascending: true
-      });
+    } =
+      await supabaseClient
+        .from("messages")
+        .select("*")
+        .eq("room_id", ROOM_ID)
+        .order("created_at", {
+          ascending: true
+        });
 
 
     if (error) {
@@ -456,93 +427,45 @@
       console.error(error);
 
       document.getElementById("status").textContent =
-        "تعذر تحميل الرسائل.";
+        "حدث خطأ في تحميل الرسائل";
 
       return;
     }
 
 
-    displayMessages(data || []);
-  }
-
-
-  /* =========================
-     DISPLAY MESSAGES
-  ========================= */
-
-  function displayMessages(messages) {
-
     const box =
       document.getElementById("messages");
+
 
     box.innerHTML = "";
 
 
-    messages.forEach(message => {
+    data.forEach(message => {
 
       const div =
         document.createElement("div");
 
-      const sender =
-        String(message.sender || "");
 
-      const mySender =
+      div.classList.add("message");
+
+
+      if (
         currentUser &&
-        sender === String(currentUser.id);
+        String(message.sender) ===
+        String(currentUser.id)
+      ) {
 
+        div.classList.add("mine");
 
-      div.className =
-        "message " +
-        (mySender
-          ? "my-message"
-          : "other-message");
+      } else {
 
-
-      const name =
-        document.createElement("div");
-
-      name.className =
-        "sender-name";
-
-      name.textContent =
-        mySender
-          ? currentUsername
-          : "الطرف الآخر";
-
-
-      const content =
-        document.createElement("div");
-
-      content.textContent =
-        message.content || "";
-
-
-      const time =
-        document.createElement("div");
-
-      time.className =
-        "message-time";
-
-
-      if (message.created_at) {
-
-        const date =
-          new Date(message.created_at);
-
-        time.textContent =
-          date.toLocaleTimeString(
-            "ar-SA",
-            {
-              hour: "2-digit",
-              minute: "2-digit"
-            }
-          );
+        div.classList.add("theirs");
       }
 
 
-      div.appendChild(name);
-      div.appendChild(content);
-      div.appendChild(time);
+      div.textContent =
+        message.content;
+
 
       box.appendChild(div);
 
@@ -555,16 +478,13 @@
 
 
   /* =========================
-     SEND MESSAGE
+     إرسال الرسائل
   ========================= */
 
   async function sendMessage() {
 
     const input =
       document.getElementById("messageInput");
-
-    const button =
-      document.getElementById("sendButton");
 
     const content =
       input.value.trim();
@@ -583,29 +503,24 @@
     }
 
 
-    button.disabled = true;
-    input.disabled = true;
-
-
     const {
       error
-    } = await supabaseClient
-      .from("messages")
-      .insert({
-        room_id: ROOM_ID,
+    } =
+      await supabaseClient
+        .from("messages")
+        .insert({
 
-        /*
-          sender في قاعدة البيانات عندك TEXT
-          لذلك نحول UUID إلى TEXT
-        */
-        sender: currentUser.id.toString(),
+          room_id: ROOM_ID,
 
-        content: content
-      });
+          /*
+           * sender في جدولك من نوع TEXT
+           * لذلك نحول UUID إلى نص
+           */
 
+          sender: String(currentUser.id),
 
-    button.disabled = false;
-    input.disabled = false;
+          content: content
+        });
 
 
     if (error) {
@@ -631,12 +546,13 @@
 
 
   /* =========================
-     REALTIME
+     التحديث المباشر
   ========================= */
 
   function startRealtime() {
 
     if (realtimeChannel) {
+
       supabaseClient.removeChannel(
         realtimeChannel
       );
@@ -649,6 +565,7 @@
 
         .on(
           "postgres_changes",
+
           {
             event: "INSERT",
             schema: "public",
@@ -656,7 +573,8 @@
             filter:
               "room_id=eq." + ROOM_ID
           },
-          function(payload) {
+
+          function() {
 
             loadMessages();
 
@@ -668,7 +586,27 @@
 
 
   /* =========================
-     LOGOUT
+     زر Enter للإرسال
+  ========================= */
+
+  document
+    .getElementById("messageInput")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+        }
+      }
+    );
+
+
+  /* =========================
+     الخروج
   ========================= */
 
   async function logout() {
@@ -706,6 +644,8 @@
     document.getElementById("password").value =
       "";
 
+    document.getElementById("status").textContent =
+      "جارٍ الاتصال...";
   }
 
 </script>
